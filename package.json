@@ -5,7 +5,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "omniroute": "3.8.46",
+    "omniroute": "3.8.0",
     "http-proxy": "latest"
   }
 }
