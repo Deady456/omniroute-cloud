@@ -2,9 +2,10 @@
   "name": "omniroute-cloud",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx omniroute"
+    "start": "node server.js"
   },
   "dependencies": {
-    "omniroute": "latest"
+    "omniroute": "latest",
+    "http-proxy": "latest"
   }
 }
