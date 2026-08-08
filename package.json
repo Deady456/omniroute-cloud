@@ -1,0 +1,10 @@
+{
+  "name": "omniroute-cloud",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx omniroute"
+  },
+  "dependencies": {
+    "omniroute": "latest"
+  }
+}
