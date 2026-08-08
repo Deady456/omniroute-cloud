@@ -1,1 +1,44 @@
-const http = require('http');\nconst httpProxy = require('http-proxy');\nconst { spawn } = require('child_process');\n\nconst port = process.env.PORT || 8080;\n\nconsole.log('Starting OmniRoute locally on port 20130...');\nconst omni = spawn('npx', ['omniroute', 'serve', '--port', '20130'], { stdio: 'inherit', shell: true });\n\n// Monitor omniroute subprocess for crashes\nomni.on('error', (err) => {\n  console.error('Failed to start OmniRoute subprocess:', err.message);\n  process.exit(1);\n});\n\nomni.on('exit', (code, signal) => {\n  if (code !== 0) {\n    console.error(`OmniRoute exited with code ${code} (signal: ${signal}). This typically indicates a startup error in omniroute or a missing dependency.`);\n    process.exit(1);\n  }\n});\n\nconst proxy = httpProxy.createProxyServer({});\nproxy.on('error', (err, req, res) => {\n  res.writeHead(502, { 'Content-Type': 'text/plain' });\n  res.end('OmniRoute is booting up... Please try again in 5 seconds.');\n});\n\nhttp.createServer(function(req, res) {\n  proxy.web(req, res, { target: 'http://127.0.0.1:20130' });\n}).listen(port, '0.0.0.0', () => {\n  console.log('Public Gateway listening on 0.0.0.0:' + port);\n});\n
+const http = require('http');
+const httpProxy = require('http-proxy');
+const { spawn } = require('child_process');
+
+const port = process.env.PORT || 8080;
+
+console.log('Starting OmniRoute locally on port 20130...');
+
+// Try to spawn omniroute with NODE_OPTIONS to debug regex issue
+const env = Object.assign({}, process.env, {
+  NODE_OPTIONS: '--no-warnings'
+});
+
+const omni = spawn('npx', ['omniroute', 'serve', '--port', '20130'], { 
+  stdio: 'inherit', 
+  shell: true,
+  env: env
+});
+
+// Monitor omniroute subprocess for crashes
+omni.on('error', (err) => {
+  console.error('Failed to start OmniRoute subprocess:', err.message);
+  process.exit(1);
+});
+
+omni.on('exit', (code, signal) => {
+  console.error(`OmniRoute exited with code ${code} (signal: ${signal}). Check omniroute configuration or dependencies.`);
+  if (code !== 0) {
+    process.exit(1);
+  }
+});
+
+const proxy = httpProxy.createProxyServer({});
+proxy.on('error', (err, req, res) => {
+  res.writeHead(502, { 'Content-Type': 'text/plain' });
+  res.end('OmniRoute backend unavailable. Please try again in a moment.');
+});
+
+http.createServer(function(req, res) {
+  proxy.web(req, res, { target: 'http://127.0.0.1:20130' });
+}).listen(port, '0.0.0.0', () => {
+  console.log('Public Gateway listening on 0.0.0.0:' + port);
+});
+
