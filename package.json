@@ -1,1 +1,12 @@
-{\n  \"name\": \"omniroute-cloud\",\n  \"version\": \"1.0.0\",\n  \"engines\": {\n    \"node\": \"22\"\n  },\n  \"scripts\": {\n    \"start\": \"node server.js\"\n  },\n  \"dependencies\": {\n    \"omniroute\": \"3.8.48\",\n    \"http-proxy\": \"latest\"\n  }\n}\n
+{
+  "name": "omniroute-cloud",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "omniroute": "3.8.47",
+    "http-proxy": "latest"
+  }
+}
+
